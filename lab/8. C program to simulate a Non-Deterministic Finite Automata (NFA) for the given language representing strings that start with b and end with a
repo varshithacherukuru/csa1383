@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+typedef struct {
+    int transitions[100][2];  
+    int numStates;            
+} NFA;
+
+bool simulateNFA(NFA *nfa, const char *input, int currentState, int index) {
+    if (index == strlen(input)) {
+        return nfa->transitions[currentState][1] != -1;  
+    }
+
+    int nextState = nfa->transitions[currentState][input[index] - 'a'];
+    if (nextState == -1) {
+        return false;
+    }
+
+    return simulateNFA(nfa, input, nextState, index + 1);
+}
+
+int main() {
+    NFA nfa;
+    nfa.numStates = 3;
+    nfa.transitions[0][0] = -1;  
+    nfa.transitions[0][1] = 1;   
+
+    nfa.transitions[1][0] = 2;   
+    nfa.transitions[1][1] = -1;  
+
+    nfa.transitions[2][0] = 2;  
+    nfa.transitions[2][1] = 2;   
+
+    char input[100];
+    printf("Enter a string: ");
+    scanf("%s", input);
+
+    if (simulateNFA(&nfa, input, 0, 0)) {
+        printf("Accepted: The string belongs to the NFA language.\n");
+    } else {
+        printf("Rejected: The string doesn't belong to the NFA language.\n");
+    }
+
+    return 0;
+}
