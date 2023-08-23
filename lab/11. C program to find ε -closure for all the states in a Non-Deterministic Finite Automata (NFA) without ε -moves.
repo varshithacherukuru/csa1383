@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+typedef struct {
+    int transitions[100][2]; 
+    int numStates;            
+} NFA;
+
+void epsilonClosure(NFA *nfa, int state, bool closure[]) {
+    closure[state] = true;
+    int i;
+    for (i = 0; i < nfa->numStates; i++) {
+        if (!closure[i] && nfa->transitions[state][0] == i) {
+            epsilonClosure(nfa, i, closure);
+        }
+    }
+}
+
+int main() {
+    NFA nfa;
+    nfa.numStates = 4;
+    nfa.transitions[0][0] = 1;
+    nfa.transitions[0][1] = -1; 
+	nfa.transitions[1][0] = 2;  
+    nfa.transitions[1][1] = 3;  
+    nfa.transitions[2][0] = -1; 
+    nfa.transitions[2][1] = -1;
+    nfa.transitions[3][0] = -1;
+    nfa.transitions[3][1] = -1; 
+    int i;
+    for (i = 0; i < nfa.numStates; i++) {
+        bool closure[100] = {false};
+        epsilonClosure(&nfa, i, closure);
+
+        printf("e-Closure(q%d): {", i);
+        bool first = true;
+        int j;
+        for (j = 0; j < nfa.numStates; j++) {
+            if (closure[j]) {
+                if (!first) {
+                    printf(", ");
+                }
+                printf("q%d", j);
+                first = false;
+            }
+        }
+        printf("}\n");
+    }
+
+    return 0;
+}
