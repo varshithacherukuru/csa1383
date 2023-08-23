@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+bool isTerminal(char symbol) {
+    return symbol == '0' || symbol == '1';
+}
+
+bool isNonTerminal(char symbol) {
+    return symbol == 'S';
+}
+
+bool isEpsilon(char symbol) {
+    return symbol == 'e';
+}
+
+bool belongsToS(const char *input, int start, int end) {
+    if (start > end) {
+        return true;
+    }
+
+    if (input[start] == '0' && input[end] == '0') {
+        return belongsToS(input, start + 1, end - 1);
+    }
+
+    if (input[start] == '1' && input[end] == '1') {
+        return belongsToS(input, start + 1, end - 1);
+    }
+
+    if (isEpsilon(input[start]) && start == end) {
+        return true;
+    }
+
+    return false;
+}
+
+int main() {
+    char input[100];
+    printf("Enter a string: ");
+    scanf("%s", input);
+
+    if (belongsToS(input, 0, strlen(input) - 1)) {
+        printf("Accepted: The string belongs to the CFG language.\n");
+    } else {
+        printf("Rejected: The string doesn't belong to the CFG language.\n");
+    }
+
+    return 0;
+}
